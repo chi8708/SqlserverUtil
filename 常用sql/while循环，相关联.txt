@@ -1,0 +1,94 @@
+while循环：
+declare   @a   table(a   int   ,   b   varchar(10),   c   varchar(100))
+eclare @int int
+declare @cint char
+declare @binarys char(255)
+set @int=1;
+set @binarys=''
+while @int<12
+begin
+set @cint=cast(substring('01212300000',@int,1) as char)
+set @binarys=@binarys+cast(@cint as char)
+set @int=@int+1 
+print cast(@cint as char)
+print '----------------------'
+print cast(@binarys as char)
+end 
+
+运行结果
+0   
+----------------------
+    
+1   
+----------------------
+    
+2   
+----------------------
+    
+1   
+----------------------
+    
+2   
+----------------------
+    
+3   
+----------------------
+    
+0   
+----------------------
+    
+0   
+----------------------
+    
+0   
+----------------------
+    
+0   
+----------------------
+    
+0   
+----------------------
+substring 函数
+以下函数调用返回“2345”：
+substring("12345",2) 
+INNER JOIN 操作包含以下部分：
+可以在任何 FROM 子句中使用 INNER JOIN 操作。这是最常用的联接类型。只要两个表的公共字段上存在相匹配的值，Inner 联接就会组合这些表中的记录。
+
+可以将 INNER JOIN 用于 Departments 及 Employees 表，以选择出每个部门的所有雇员。而要选择所有部分（即使某些部门中并没有被分配雇员）或者所有雇员（即使某些雇员没有分配到任何部门），则可以通过 LEFT JOIN 或者 RIGHT JOIN 操作来创建外部联接。
+
+如果试图联接包含备注或 OLE 对象数据的字段，将发生错误。
+
+可以联接任何两个相似类型的数字字段。例如，可以联接自动编号和长整型字段，因为它们均是相似类型。然而，不能联接单精度型和双精度型类型字段。
+
+下例展示了如何通过 CategoryID 字段联接 Categories 和 Products 表：
+
+SELECT CategoryName, ProductName
+
+FROM Categories INNER JOIN Products
+
+ON Categories.CategoryID = Products.CategoryID;
+
+在前面的示例中，CategoryID 是被联接字段，但是它不包含在查询输出中，因为它不包含在 SELECT 语句中。若要包含被联接字段，请在 SELECT 语句中包含该字段名，在本例中是指 Categories.CategoryID。
+
+LEFT JOIN 或 RIGHT JOIN 可以嵌套在 INNER JOIN 之中，但是 INNER JOIN 不能嵌套于 LEFT JOIN 或 RIGHT JOIN 之中。
+SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
+FROM Persons
+LEFT JOIN Orders
+ON Persons.Id_P=Orders.Id_P
+ORDER BY Persons.LastName
+
+SELECT Employee.username, Project.ProjectName 
+FROM Employee LEFT JOIN Project 
+ON Employee.EmployeeID = Project.EmployeeID; 
+
+SELECT Employee.username, Project.ProjectName 
+FROM Employee RIGHT JOIN Project 
+ON Employee.EmployeeID = Project.EmployeeID; 
+
+
+
+
+
+
+
+

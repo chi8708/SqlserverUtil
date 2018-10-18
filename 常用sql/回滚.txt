@@ -1,0 +1,182 @@
+Begin Transaction：开始一个事务； 
+Commit Transaction：提交事务； 
+Rollback Transaction：回滚事务。 
+
+其中Commit Transaction 与Rollback Transaction 都必须有对应的Begin Transaction 才能正确被执行。 
+
+如： 
+
+Begin Tran 
+…… 
+Rollback Tran 
+Commit Tran 
+
+以上事务只执行了回滚操作。执行Commit Tran系统会返回3902错误，即@@Error=3902,COMMIT TRANSACTION 请求没有对应的 BEGIN TRANSACTION。 
+
+Begin Tran 
+…… 
+Commit Tran 
+Rollback Tran 
+
+以上事务员执行了提交事务操作。执行Rollback Tran系统会返回3903错误，即@@Error=3903,ROLLBACK TRANSACTION 请求没有对应的 BEGIN TRANSACTION。
+
+SQL事务处理,SQL语句执行错误回滚，BEGIN TRAN和COMMIT TRAN2010-05-04 22:47BEGIN TRAN标记事务开始
+
+COMMIT TRAN 提交事务
+
+一般把DML语句(select ,delete,update,insert语句)放在BEGIN TRAN...COMMIT TRAN 之间作为一个事务处理
+
+也就是那些语句执行过程中如果遇到错误，无论哪句遇到错误，所有语句都会回滚到BEGIN TRAN之前的状态。
+
+联机帮助：当 SET XACT_ABORT 为 ON 时，如果执行 Transact-SQL 语句产生运行时错误，则整个事务将终止并回滚。 当 SET XACT_ABORT 为 OFF 时，有时只回滚产生错误的 Transact-SQL 语句，而事务将继续进行处理。如果错误很严重，那么即使 SET XACT_ABORT 为 OFF，也可能回滚整个事务。
+
+1、首先我们创建测试数据库：
+
+create database demo
+
+    2、创建数据表和测试数据：(这里注意外键控制)
+
+use demo
+
+CREATE TABLE student
+
+(    
+
+         stuid int NOT NULL PRIMARY KEY,
+
+         stuname varchar(50)
+
+)
+
+CREATE TABLE score
+
+(
+
+         stuid int NOT NULL REFERENCES student(stuid),
+
+         score int
+
+)
+
+GO
+
+
+
+INSERT INTO student VALUES (101,'zhangsan')
+
+INSERT INTO student VALUES (102,'wangwu')
+
+INSERT INTO student VALUES (103,'lishi')
+
+INSERT INTO student VALUES (104,'maliu')
+
+
+
+GO
+
+二、各种用法及输出结果：
+
+      1、语句1：
+
+use demo
+
+
+
+--Invoking a run-time error
+
+SET XACT_ABORT OFF
+
+BEGIN TRAN
+
+     INSERT INTO score   VALUES (101,90)
+
+     INSERT INTO score VALUES (102,78)
+
+     INSERT INTO score VALUES (107,76) /**//* Foreign Key Error */
+
+     INSERT INTO score VALUES (103,81)
+
+     INSERT INTO score VALUES (104,65)
+
+COMMIT TRAN
+
+go
+
+      结果1：只回滚错误行，语句还继续执行。
+
+--select * from score
+
+101     90
+
+102     78
+
+103     81
+
+104     65
+
+      2、语句2：
+
+use demo
+
+
+
+--事务回滚
+
+SET XACT_ABORT on
+
+BEGIN TRAN
+
+     INSERT INTO score   VALUES (101,90)
+
+     INSERT INTO score VALUES (102,78)
+
+     INSERT INTO score VALUES (107,76) /**//* Foreign Key Error */
+
+     INSERT INTO score VALUES (103,81)
+
+     INSERT INTO score VALUES (104,65)
+
+COMMIT TRAN
+
+go
+
+      结果2：事务终止并全部回滚，结果为空。
+
+--select * from score
+
+
+
+      3、语句3：
+
+use demo
+
+
+
+--事务在错误行终止，错误行回滚，错误行之前的不回滚
+
+SET XACT_ABORT on
+
+BEGIN
+
+INSERT INTO score   VALUES (101,90)
+
+     INSERT INTO score VALUES (102,78)
+
+     INSERT INTO score VALUES (107,76) /**//* Foreign Key Error */
+
+     INSERT INTO score VALUES (103,81)
+
+     INSERT INTO score VALUES (104,65)
+
+END
+
+go
+
+      结果3：出现这种是因为系统把每个insert语句都看成是单独的事务，所以错误行以前的是不回滚的。
+
+--select * from score
+
+101     90
+
+102     78
+ 

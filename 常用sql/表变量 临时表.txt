@@ -1,0 +1,15 @@
+SQL 表变量,临时表 
+1.表变量
+    DECLARE @indextable table
+        (
+        uid int identity(1,1),    
+        id int
+        )
+2.临时表
+    CREATE Table #temptable (
+        id int,
+        date datetime        
+        )
+
+当数据量大时,建议使用临时表!
+

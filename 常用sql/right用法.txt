@@ -1,0 +1,30 @@
+substr(字符串,lengyh(字符串)-长度+1)
+例如：
+select right('0000'+Convert(NVARCHAR(50),MAX(CONVERT(INT,SUBSTRING([nvcTourLoginNAme],3,LEN([nvcTourLoginName])-2)))+1),4) FROM [JinLoveDatabase].[dbo].[SysTourInfo] 
+
+SQL SERVER LEN() 函数 和 RIGHT()函数处理方式差别：
+SERVER LEN()函数得到的长度是去掉尾部空格的长度
+而RIGHT()函数不处理尾部空格
+示例
+declare @str nvarchar(10)
+set @str = 'abcde '
+print len(@str)
+print right(@str,2)
+
+结果如下
+-------
+5
+e 
+
+
+6.7.4  LEFT()与RIGHT()函数
+
+LEFT()与RIGHT()函数是相似的，它们都返回一定长度的子字符串。这两个函数的区别是，它们返回的分别是字符串的不同部分。LEFT()函数返回字符串最左边的字符，顺序从左数到右。RIGHT()函数正好相反，它从最右边的字符开始，以从右到左的顺序返回特定数量的字符。看一看使用这两个函数返回"GeorgeWashington"这个字符串的子字符串的例子。
+
+如果使用LEFT()函数返回一个5字符的子字符串，则函数先定位最左边的字符，向右数5个字符，然后返回这个子字符串，如下所示。
+
+DECLARE @FullName varchar(25)  SET @FullName = 'George Washington' SELECT LEFT(@FullName, 5) 如果使用RIGHT()函数返回一个5字符的子字符串，则函数先定位最右边的字符，向左数5个字符，然后返回这个子字符串，如下所示。
+
+DECLARE @FullName varchar(25)  SET @FullName = 'George Washington' SELECT RIGHT (@FullName, 5) 要想返回字符串中有意义的部分，这两个函数都不是特别有用。如果想返回全名中的姓氏或者名字，该怎么办？这需要多做一点工作。如果能确定每个姓名中空格的位置，就可以使用LEFT()函数在全名中读取名字。在这种情况下，可以使用CHARINDEX()或者PATINDEX()函数来定位空格，然后使用LEFT()函数返回空格前的字符。下面是第一个用过程方法编写的例子，它将处理过程分解成以下步骤：
+
+DECLARE @FullName varchar(25), @SpaceIndex tinyint  SET @FullName = 'George Washington' -- Get index of the delimiting space:  SET @SpaceIndex = CHARINDEX(' ' , @FullName)  -- Return all characters to the left of the space:  SELECT LEFT(@FullName, @SpaceIndex -  1) 如果不想在结果中包含空格，就需要从@SpaceIndex值中减去1，这样结果中就只有名字了。

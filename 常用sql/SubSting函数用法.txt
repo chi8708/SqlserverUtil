@@ -1,0 +1,4 @@
+select substring(convert(varchar,birthdate),5,1) as mon ,* from employees 
+
+insert into employees values('John','Adams','1992-01-21','Boston',20,10000)
+insert into table values('tom','01',1992)
