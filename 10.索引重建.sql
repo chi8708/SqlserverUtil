@@ -27,3 +27,26 @@ alter index index_wxopenid
 on ElcCustomerinfo
 rebuild
 with(online = on ,sort_in_tempDB = on , maxdop = 3); -----最大并行度，操作系统CPU核数的80%为宜
+
+
+
+----多表
+Use Test
+Go 
+
+DECLARE @DBCCString NVARCHAR(1000)
+DECLARE @TableName VARCHAR(100)
+DECLARE Cur_Index CURSOR FOR  
+	SELECT Name AS TblName FROM sysobjects  WHERE xType='U' ORDER BY TblName FOR READ ONLY
+	OPEN Cur_Index
+	FETCH NEXT FROM Cur_Index INTO @TableName
+		WHILE @@FETCH_STATUS=0
+			BEGIN
+   				SET @DBCCString = 'DBCC DBREINDEX(@TblName,'''')WITH NO_INFOMSGS'
+   				EXEC SP_EXECUTESQL  @DBCCString,N'@TblName VARCHAR(100)', @TableName
+   				PRINT '重建表' + @TableName +'的索引........OK!'
+   				FETCH NEXT FROM Cur_Index INTO @TableName
+			END
+CLOSE Cur_Index
+DEALLOCATE Cur_Index
+PRINT '操作完成！'
