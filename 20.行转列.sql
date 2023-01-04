@@ -41,3 +41,22 @@ PIVOT
 (
 	MAX(A.成绩) FOR A.科目 IN (语文,数学,英语,生物,物理)
 ) P
+
+
+--各单据类型 单量统计 
+
+方式1 推荐
+SELECT * FROM  
+(
+SELECT a.BillSort,a.OrderNo  FROM dbo.TelOrder a WITH(NOLOCK) 
+WHERE StopFlag=0 
+) b PIVOT (COUNT(OrderNo) FOR BillSort IN([1],[2],[3],[4],[5])) c
+
+
+方式2 先分组统计 再转换
+SELECT * FROM  
+(
+SELECT a.BillSort,count(1) qty FROM dbo.TelOrder a WITH(NOLOCK) 
+WHERE StopFlag=0 
+GROUP by BillSort
+) b PIVOT (MAX(qty) FOR BillSort IN([1],[2],[3],[4],[5])) c
