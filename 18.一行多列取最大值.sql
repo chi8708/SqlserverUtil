@@ -22,3 +22,16 @@ select Guid, (select max(NewDate) as MaxDate from (select Demo.Date1 as NewDate 
 ————————————————
 版权声明：本文为CSDN博主「weixin_39973410」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/weixin_39973410/article/details/112894519
+
+
+
+
+
+多行 分组后取其中1行
+SELECT  * FROM
+(
+  SELECT
+    *,
+    ROW_NUMBER() OVER (PARTITION BY villageId ORDER BY CountC DESC) AS rn
+  FROM Village_Tel_20230907
+  ) c WHERE rn=1
