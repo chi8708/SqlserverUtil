@@ -171,3 +171,37 @@ END
 
 
 
+
+--- 推荐 所有奖品放在1个奖品池表，通过 CEILING(RAND()*100)控制概率
+
+				DECLARE @PrizeId INT;
+				DECLARE @PrizeType INT;
+				DECLARE @PrizeName VARCHAR(100);
+				IF EXISTS( SELECT 1 FROM dbo.Active240507_Prize WHERE DrawState=0)
+				BEGIN
+					--(一定中奖)
+					IF EXISTS(SELECT 1 FROM dbo.Active240507_Prize WHERE PrizeType=2 AND DrawState=0)
+					BEGIN
+						 SELECT TOP(1) @PrizeId=Id,@PrizeType=PrizeType,@PrizeName=PrizeName FROM dbo.Active240507_Prize 
+						 WITH (XLOCK)
+						 WHERE DrawState=0 AND PrizeType=2
+						 ORDER BY NEWID()
+					END 
+					ELSE IF(CEILING(RAND()*100)<=20)--控制概率
+					BEGIN
+						--取奖品
+						SELECT TOP(1) @PrizeId=Id,@PrizeType=PrizeType,@PrizeName=PrizeName FROM dbo.Active240507_Prize 
+						WITH(XLOCK)
+						WHERE DrawState=0 AND PrizeType=1
+						ORDER BY NEWID()
+					END 
+					ELSE
+					BEGIN
+						--未中奖
+						SELECT  @PrizeId=0,@PrizeType=3,@PrizeName='谢谢参与'
+					END 
+				END 
+				ELSE
+				BEGIN
+					 SELECT  @PrizeId=0,@PrizeType=3,@PrizeName='谢谢参与'
+				END 
