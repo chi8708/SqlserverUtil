@@ -20,7 +20,7 @@ LEFT JOIN sys.types AS st ON c.system_type_id = st.system_type_id
 LEFT JOIN sys.key_constraints AS pkc ON t.object_id = pkc.parent_object_id
     AND c.column_id IN (SELECT ic.column_id FROM sys.index_columns AS ic WHERE ic.object_id = t.object_id AND ic.index_id = pkc.unique_index_id)
 LEFT JOIN sys.default_constraints AS dc ON c.default_object_id = dc.object_id
-WHERE st.name<>'sysname' AND t.name='PX_ExamPageRecordAnswer'
+WHERE st.name<>'sysname' AND t.name='PX_'
 ORDER BY t.name, c.column_id;
 
 
