@@ -1,0 +1,7 @@
+--ID 自增 插入后保证ID值不自增
+SET IDENTITY_INSERT Pub_RoleFunction ON;
+
+INSERT INTO Table1(ID)
+SELECT ID FROM TABLE
+
+SET IDENTITY_INSERT Pub_RoleFunction OFF;
